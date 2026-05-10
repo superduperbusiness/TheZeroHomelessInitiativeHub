@@ -2,94 +2,162 @@
 import { useState } from 'react';
 
 const MOCK_MATCHES = [
-  { name: 'Union Rescue Mission', type: 'Shelter + Services', score: 94, dist: '0.4mi', available: true, beds: 8, tags: ['Housing', 'Meals', 'Case Mgmt', 'Free'], color: '#22c55e', reasons: ['Within 0.4mi', 'Matches housing need', 'Has open capacity', 'Free program'] },
-  { name: 'PATH Homeless Services', type: 'Housing Navigation', score: 88, dist: '0.9mi', available: true, beds: null, tags: ['Housing', 'Employment', 'Free'], color: '#38bdf8', reasons: ['Matches housing need', 'Matches employment need', 'Short waitlist'] },
-  { name: 'Exodus Recovery Center', type: 'Mental Health + Recovery', score: 82, dist: '1.2mi', available: true, beds: null, tags: ['Mental Health', 'Recovery', 'Sliding Scale'], color: '#a855f7', reasons: ['Matches mental health need', 'Matches recovery need', 'Has open capacity'] },
-  { name: 'Volunteers of America', type: 'Veteran Services', score: 79, dist: '2.1mi', available: true, beds: 3, tags: ['Veterans', 'Housing', 'Free'], color: '#6366f1', reasons: ['Veteran-specific program', 'Has open capacity', 'Free program'] },
-  { name: 'St. Joseph Center', type: 'Comprehensive Services', score: 71, dist: '2.4mi', available: false, beds: null, tags: ['Food', 'Counseling', 'Sliding Scale'], color: '#f59e0b', reasons: ['Matches food need', 'Short waitlist'] },
-  { name: 'LA County Mental Health', type: 'Psychiatric Services', score: 65, dist: '3.1mi', available: true, beds: null, tags: ['Psychiatric', 'Mental Health', 'Free'], color: '#ef4444', reasons: ['Matches mental health need', 'Free program'] },
+  {
+    id: '1', name: 'PATH Homes LA', type: 'Supportive Housing', score: 94, dist: '0.4mi',
+    tags: ['Housing', 'Case Mgmt', 'Mental Health', 'Free'], beds: 3, status: 'open',
+    reasons: ['Within 0.4km', 'Matches: housing, mental health', 'Has open capacity', 'Free program'],
+    color: '#22c55e', phone: '(213) 555-0101', hours: 'Mon–Fri 8am–5pm',
+  },
+  {
+    id: '2', name: 'St. Joseph Center', type: 'Nonprofit Services', score: 87, dist: '0.8mi',
+    tags: ['Food', 'Counseling', 'Employment', 'Free'], beds: null, status: 'open',
+    reasons: ['Within 0.8km', 'Matches: food, employment', 'Has open capacity', 'Free program'],
+    color: '#38bdf8', phone: '(310) 555-0202', hours: 'Mon–Sat 9am–6pm',
+  },
+  {
+    id: '3', name: 'Didi Hirsch Mental Health', type: 'Mental Health Program', score: 82, dist: '1.1mi',
+    tags: ['Mental Health', 'Crisis', 'Sliding Scale'], beds: null, status: 'open',
+    reasons: ['Matches: mental health', 'Crisis services available', 'Sliding scale cost'],
+    color: '#a855f7', phone: '(800) 555-0303', hours: '24/7',
+  },
+  {
+    id: '4', name: 'Union Rescue Mission', type: 'Shelter', score: 79, dist: '1.4mi',
+    tags: ['Men', 'Meals', 'Shelter', 'Free'], beds: 8, status: 'open',
+    reasons: ['Matches: housing, food', '8 beds available', 'Free program'],
+    color: '#f59e0b', phone: '(213) 555-0404', hours: 'Daily 6pm–8am',
+  },
+  {
+    id: '5', name: 'Exodus Recovery', type: 'Substance Abuse – Outpatient', score: 71, dist: '2.0mi',
+    tags: ['Substance Abuse', 'Mental Health', 'Sliding Scale'], beds: null, status: 'waitlist',
+    reasons: ['Matches: substance abuse', 'Short waitlist (6 people)', 'Dual diagnosis capable'],
+    color: '#ef4444', phone: '(323) 555-0505', hours: 'Mon–Fri 7am–9pm',
+  },
+  {
+    id: '6', name: 'Volunteers of America', type: 'Veteran Services', score: 68, dist: '2.3mi',
+    tags: ['Veterans', 'Housing', 'Employment', 'Free'], beds: 4, status: 'open',
+    reasons: ['Veteran-specific program', '4 beds available', 'Free program'],
+    color: '#6366f1', phone: '(213) 555-0606', hours: 'Mon–Fri 8am–5pm',
+  },
 ];
 
-export default function MatchesPage() {
-  const [view, setView] = useState<'grid' | 'list'>('list');
-  const [filterAvailable, setFilterAvailable] = useState(false);
+type Match = typeof MOCK_MATCHES[0];
 
-  const results = filterAvailable ? MOCK_MATCHES.filter(m => m.available) : MOCK_MATCHES;
+export default function MatchesPage() {
+  const [selected, setSelected] = useState<Match | null>(null);
+  const [applied, setApplied] = useState<Set<string>>(new Set());
+  const [filter, setFilter] = useState('All');
+
+  const filters = ['All', 'Housing', 'Mental Health', 'Substance Abuse', 'Food', 'Veterans', 'Crisis'];
+  const filtered = filter === 'All' ? MOCK_MATCHES : MOCK_MATCHES.filter(m => m.tags.some(t => t.toLowerCase().includes(filter.toLowerCase())));
+
+  function handleApply(id: string) {
+    setApplied(prev => new Set(Array.from(prev).concat(id)));
+  }
 
   return (
-    <main style={{ minHeight: '100vh', background: '#020617', color: '#e5e7eb', fontFamily: 'system-ui, sans-serif', padding: '2rem' }}>
-      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+    <main style={{ minHeight: '100vh', background: '#020617', color: '#e5e7eb', fontFamily: 'system-ui, sans-serif' }}>
+      <nav style={{ background: '#0f172a', borderBottom: '1px solid #1e293b', padding: '1rem 2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <a href="/dashboard" style={{ color: '#64748b', textDecoration: 'none', fontSize: '0.9rem' }}>← Dashboard</a>
+        <span style={{ fontWeight: 800, color: '#22c55e' }}>🤝 My Matches</span>
+        <span style={{ background: '#22c55e20', color: '#22c55e', padding: '0.2rem 0.6rem', borderRadius: 999, fontSize: '0.75rem' }}>{MOCK_MATCHES.length} matches found</span>
+      </nav>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '1rem 0 0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <div>
-            <h1 style={{ fontSize: '1.8rem', fontWeight: 800, margin: 0, color: '#38bdf8' }}>Matched Resources</h1>
-            <p style={{ color: '#64748b', margin: '0.25rem 0 0' }}>For John D. · Critical · Housing + Mental Health</p>
+      <div style={{ display: 'flex', height: 'calc(100vh - 65px)' }}>
+        {/* Match List */}
+        <div style={{ flex: selected ? '0 0 420px' : 1, overflowY: 'auto', padding: '1.5rem', borderRight: selected ? '1px solid #1e293b' : 'none' }}>
+          {/* Filters */}
+          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+            {filters.map(f => (
+              <button key={f} onClick={() => setFilter(f)}
+                style={{ padding: '0.35rem 0.8rem', borderRadius: 999, border: `1px solid ${filter === f ? '#22c55e' : '#1e293b'}`, background: filter === f ? '#22c55e20' : 'transparent', color: filter === f ? '#22c55e' : '#64748b', cursor: 'pointer', fontSize: '0.82rem' }}>
+                {f}
+              </button>
+            ))}
           </div>
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <button onClick={() => setFilterAvailable(!filterAvailable)}
-              style={{ padding: '0.4rem 0.9rem', borderRadius: 999, border: `1px solid ${filterAvailable ? '#22c55e' : '#1e293b'}`, background: filterAvailable ? '#22c55e22' : 'transparent', color: filterAvailable ? '#22c55e' : '#64748b', cursor: 'pointer', fontSize: '0.8rem' }}>
-              {filterAvailable ? '✓ Available Only' : 'Show Available Only'}
-            </button>
-            <button onClick={() => setView(view === 'list' ? 'grid' : 'list')}
-              style={{ padding: '0.4rem 0.75rem', background: '#1e293b', border: 'none', borderRadius: 6, color: '#94a3b8', cursor: 'pointer', fontSize: '0.85rem' }}>
-              {view === 'list' ? '⊞ Grid' : '☰ List'}
-            </button>
-          </div>
-        </div>
 
-        {/* Match Summary Bar */}
-        <div style={{ background: '#0f172a', borderRadius: 10, padding: '1rem 1.5rem', marginBottom: '1.5rem', border: '1px solid #1e293b', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-          <div><span style={{ color: '#64748b', fontSize: '0.8rem' }}>Total Matches</span><div style={{ color: '#38bdf8', fontWeight: 800, fontSize: '1.4rem' }}>{results.length}</div></div>
-          <div><span style={{ color: '#64748b', fontSize: '0.8rem' }}>High Confidence</span><div style={{ color: '#22c55e', fontWeight: 800, fontSize: '1.4rem' }}>{results.filter(m => m.score >= 80).length}</div></div>
-          <div><span style={{ color: '#64748b', fontSize: '0.8rem' }}>Beds Available</span><div style={{ color: '#a855f7', fontWeight: 800, fontSize: '1.4rem' }}>{results.filter(m => m.beds && m.beds > 0).reduce((sum, m) => sum + (m.beds || 0), 0)}</div></div>
-          <div><span style={{ color: '#64748b', fontSize: '0.8rem' }}>Closest</span><div style={{ color: '#f59e0b', fontWeight: 800, fontSize: '1.4rem' }}>0.4mi</div></div>
-        </div>
-
-        {/* Results */}
-        <div style={{ display: 'grid', gap: '0.75rem', gridTemplateColumns: view === 'grid' ? 'repeat(auto-fill, minmax(280px, 1fr))' : '1fr' }}>
-          {results.map((match) => (
-            <div key={match.name} style={{ background: '#0f172a', border: `1px solid ${match.color}33`, borderRadius: 12, padding: '1.25rem', position: 'relative', overflow: 'hidden' }}>
-              {/* Score Badge */}
-              <div style={{ position: 'absolute', top: '1rem', right: '1rem', background: match.score >= 80 ? '#22c55e' : match.score >= 65 ? '#f59e0b' : '#64748b', color: '#020617', borderRadius: 999, padding: '0.2rem 0.6rem', fontWeight: 800, fontSize: '0.85rem' }}>
-                {match.score}% match
+          <div style={{ display: 'grid', gap: '0.75rem' }}>
+            {filtered.map(m => (
+              <div key={m.id} onClick={() => setSelected(m === selected ? null : m)}
+                style={{ background: '#0f172a', border: `2px solid ${selected?.id === m.id ? m.color : m.color + '33'}`, borderRadius: 12, padding: '1.25rem', cursor: 'pointer', transition: 'all 0.15s' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                  <div>
+                    <div style={{ fontWeight: 700, marginBottom: '0.2rem' }}>{m.name}</div>
+                    <div style={{ color: m.color, fontSize: '0.8rem' }}>{m.type} · 📍 {m.dist}</div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '1.4rem', fontWeight: 800, color: m.score >= 80 ? '#22c55e' : m.score >= 60 ? '#f59e0b' : '#94a3b8' }}>{m.score}</div>
+                    <div style={{ fontSize: '0.7rem', color: '#64748b' }}>match score</div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                  {m.tags.map(t => (
+                    <span key={t} style={{ padding: '0.15rem 0.5rem', background: '#1e293b', borderRadius: 999, fontSize: '0.72rem', color: '#94a3b8' }}>{t}</span>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.82rem', color: m.status === 'open' ? '#22c55e' : '#f59e0b' }}>
+                    {m.status === 'open' ? '● Open' : '⏳ Waitlist'}
+                    {m.beds !== null && ` · ${m.beds} beds`}
+                  </span>
+                  <button onClick={(e) => { e.stopPropagation(); handleApply(m.id); }}
+                    style={{ padding: '0.35rem 0.9rem', background: applied.has(m.id) ? '#22c55e20' : m.color, border: applied.has(m.id) ? `1px solid #22c55e` : 'none', borderRadius: 8, color: applied.has(m.id) ? '#22c55e' : '#020617', fontWeight: 700, cursor: 'pointer', fontSize: '0.82rem' }}>
+                    {applied.has(m.id) ? '✓ Applied' : m.beds !== null ? 'Reserve Bed' : 'Connect'}
+                  </button>
+                </div>
               </div>
+            ))}
+          </div>
+        </div>
 
-              <div style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '0.2rem', paddingRight: '80px' }}>{match.name}</div>
-              <div style={{ color: match.color, fontSize: '0.8rem', marginBottom: '0.5rem' }}>{match.type} · {match.dist}</div>
-
-              {/* Match Reasons */}
-              <div style={{ marginBottom: '0.75rem' }}>
-                {match.reasons.map(r => (
-                  <div key={r} style={{ color: '#64748b', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                    <span style={{ color: '#22c55e' }}>✓</span> {r}
+        {/* Detail Panel */}
+        {selected && (
+          <div style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
+            <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', marginBottom: '1rem', fontSize: '0.9rem' }}>← Back to list</button>
+            <div style={{ background: '#0f172a', borderRadius: 14, border: `2px solid ${selected.color}`, padding: '1.5rem', marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                <div>
+                  <h2 style={{ margin: '0 0 0.25rem', color: selected.color }}>{selected.name}</h2>
+                  <p style={{ color: '#64748b', margin: 0, fontSize: '0.9rem' }}>{selected.type}</p>
+                </div>
+                <div style={{ textAlign: 'center', background: '#020617', borderRadius: 10, padding: '0.75rem 1rem' }}>
+                  <div style={{ fontSize: '2rem', fontWeight: 800, color: '#22c55e' }}>{selected.score}</div>
+                  <div style={{ fontSize: '0.7rem', color: '#64748b' }}>match score</div>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+                {[
+                  ['📍 Distance', selected.dist],
+                  ['📞 Phone', selected.phone],
+                  ['🕒 Hours', selected.hours],
+                  ['🛏️ Beds', selected.beds !== null ? `${selected.beds} available` : 'N/A'],
+                  ['💰 Cost', selected.tags.includes('Free') ? 'Free' : 'Sliding Scale'],
+                  ['📊 Status', selected.status === 'open' ? '✅ Open' : '⏳ Waitlist'],
+                ].map(([k, v]) => (
+                  <div key={k} style={{ background: '#0a0f1e', borderRadius: 8, padding: '0.75rem' }}>
+                    <div style={{ color: '#64748b', fontSize: '0.78rem', marginBottom: '0.2rem' }}>{k}</div>
+                    <div style={{ color: '#e5e7eb', fontSize: '0.9rem', fontWeight: 600 }}>{v}</div>
                   </div>
                 ))}
               </div>
-
-              {/* Tags */}
-              <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
-                {match.tags.map(t => (
-                  <span key={t} style={{ padding: '0.15rem 0.5rem', background: '#1e293b', borderRadius: 999, fontSize: '0.72rem', color: '#94a3b8' }}>{t}</span>
+              <div style={{ marginBottom: '1rem' }}>
+                <h4 style={{ color: '#94a3b8', marginBottom: '0.5rem', fontSize: '0.88rem' }}>Why this match?</h4>
+                {selected.reasons.map((r, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem' }}>
+                    <span style={{ color: '#22c55e' }}>✓</span>
+                    <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>{r}</span>
+                  </div>
                 ))}
               </div>
-
-              {/* Action Row */}
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                {match.beds !== null && (
-                  <span style={{ color: match.beds > 0 ? '#22c55e' : '#ef4444', fontWeight: 700, fontSize: '0.85rem', flex: 1 }}>
-                    {match.beds > 0 ? `${match.beds} beds open` : 'Full'}
-                  </span>
-                )}
-                {!match.available && match.beds === null && <span style={{ color: '#f59e0b', fontSize: '0.8rem', flex: 1 }}>Waitlist</span>}
-                <button style={{ padding: '0.4rem 0.85rem', background: '#1e293b', border: 'none', borderRadius: 6, color: '#94a3b8', cursor: 'pointer', fontSize: '0.8rem' }}>Message</button>
-                <button style={{ padding: '0.4rem 0.85rem', background: match.color, color: '#020617', border: 'none', borderRadius: 6, fontWeight: 700, cursor: 'pointer', fontSize: '0.8rem' }}>
-                  {match.beds !== null && match.beds > 0 ? 'Reserve Bed' : 'Apply'}
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <button onClick={() => handleApply(selected.id)}
+                  style={{ flex: 1, padding: '0.75rem', background: applied.has(selected.id) ? '#22c55e20' : selected.color, border: applied.has(selected.id) ? '1px solid #22c55e' : 'none', borderRadius: 8, color: applied.has(selected.id) ? '#22c55e' : '#020617', fontWeight: 700, cursor: 'pointer' }}>
+                  {applied.has(selected.id) ? '✓ Applied / Reserved' : selected.beds !== null ? '🛏️ Reserve a Bed' : '🤝 Connect / Apply'}
                 </button>
+                <a href="/messages" style={{ padding: '0.75rem 1rem', background: '#1e293b', borderRadius: 8, color: '#94a3b8', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center' }}>💬 Message</a>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
       </div>
     </main>
   );

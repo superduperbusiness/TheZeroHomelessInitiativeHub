@@ -2,85 +2,80 @@
 import { useState } from 'react';
 
 const PROVIDER_TYPES = [
-  { value: 'shelter_provider', label: '🏠 Shelter / Emergency Housing', color: '#22c55e' },
-  { value: 'case_manager', label: '👤 Case Manager', color: '#a855f7' },
-  { value: 'nonprofit', label: '🤝 Nonprofit Organization', color: '#38bdf8' },
-  { value: 'church', label: '⛪ Church / Faith Community', color: '#f59e0b' },
-  { value: 'mental_health_program', label: '🧠 Mental Health Program', color: '#6366f1' },
-  { value: 'substance_abuse_inpatient', label: '💊 Substance Abuse - Inpatient', color: '#ef4444' },
-  { value: 'substance_abuse_outpatient', label: '💊 Substance Abuse - Outpatient', color: '#f97316' },
-  { value: 'substance_abuse_livein', label: '🏡 Substance Abuse - Live-In', color: '#84cc16' },
-  { value: 'healthcare', label: '⚕️ Healthcare / Clinic', color: '#06b6d4' },
-  { value: 'hospital', label: '🏥 Hospital', color: '#dc2626' },
-  { value: 'psychiatric_provider', label: '🧬 Psychiatric Provider', color: '#7c3aed' },
-  { value: 'mental_health_counselor', label: '💬 Mental Health Counselor', color: '#2563eb' },
-  { value: 'therapist', label: '🛋️ Therapist', color: '#9333ea' },
-  { value: 'food_bank', label: '🍽️ Food Bank', color: '#ca8a04' },
-  { value: 'supportive_housing', label: '🏘️ Supportive Housing', color: '#16a34a' },
-  { value: 'housing_authority', label: '🏛️ Housing Authority', color: '#0891b2' },
-  { value: 'apartment_manager', label: '🔑 Apartment Manager', color: '#64748b' },
-  { value: 'street_team', label: '🚶 Street Outreach Team', color: '#f59e0b' },
-  { value: 'crisis_team', label: '🚨 Crisis Response Team', color: '#ef4444' },
-  { value: 'grant_giver', label: '💰 Grant / Funding Source', color: '#eab308' },
-  { value: 'foundation', label: '🏆 Foundation', color: '#a855f7' },
-  { value: 'corporation', label: '🏢 Corporation / Business', color: '#64748b' },
-  { value: 'local_business', label: '🏪 Local Business', color: '#22c55e' },
-  { value: 'state_agency', label: '🏛️ State Agency', color: '#3b82f6' },
-  { value: 'federal_agency', label: '🇺🇸 Federal Agency / Department', color: '#1d4ed8' },
-  { value: 'educational_program', label: '📚 Educational Program', color: '#8b5cf6' },
-  { value: 'emergency_help', label: '🆘 Emergency Help Services', color: '#ef4444' },
-  { value: 'assisted_living', label: '🧓 Assisted Living', color: '#06b6d4' },
-  { value: 'ownership_program', label: '🏠 Homeownership Program', color: '#16a34a' },
-  { value: 'hud_resource', label: '🏗️ HUD Resource Team', color: '#0369a1' },
-  { value: 'donation_resource', label: '🎁 Donation Resource', color: '#d97706' },
-  { value: 'religious_org', label: '✝️ Religious Organization', color: '#92400e' },
-  { value: 'other', label: '➕ Other Service Provider', color: '#475569' },
+  { value: 'shelter_provider', label: '🏠 Shelter Provider', desc: 'Emergency, transitional, or permanent shelter' },
+  { value: 'case_manager', label: '👤 Case Manager', desc: 'Individual licensed case managers' },
+  { value: 'nonprofit', label: '🤝 Nonprofit Organization', desc: '501(c)(3) service organizations' },
+  { value: 'church', label: '⛪ Church / Faith Community', desc: 'Faith-based service providers' },
+  { value: 'religious_org', label: '🕌 Religious Organization', desc: 'All faiths and denominations' },
+  { value: 'mental_health_program', label: '🧠 Mental Health Program', desc: 'Counseling, therapy, psychiatric services' },
+  { value: 'mental_health_counselor', label: '💭 Mental Health Counselor', desc: 'Individual licensed counselors & therapists' },
+  { value: 'psychiatric_provider', label: '💊 Psychiatric Provider', desc: 'Psychiatrists, psychiatric NPs' },
+  { value: 'substance_abuse_inpatient', label: '🏥 Substance Abuse – Inpatient', desc: 'Residential inpatient treatment programs' },
+  { value: 'substance_abuse_outpatient', label: '🏢 Substance Abuse – Outpatient', desc: 'IOP, OP treatment programs' },
+  { value: 'substance_abuse_livein', label: '🏡 Substance Abuse – Live-In', desc: 'Sober living, live-in recovery homes' },
+  { value: 'supportive_housing', label: '🏘️ Supportive Housing', desc: 'Permanent supportive housing providers' },
+  { value: 'housing_agency', label: '🏛️ Housing Agency', desc: 'Government and nonprofit housing agencies' },
+  { value: 'housing_authority', label: '📋 Housing Authority', desc: 'Public housing authorities (Section 8, HUD)' },
+  { value: 'apartment_manager', label: '🔑 Apartment Manager', desc: 'Property managers offering affordable units' },
+  { value: 'homeowner', label: '🏠 Homeowner', desc: 'Homeowners offering rooms or ADUs' },
+  { value: 'ownership_program', label: '📜 Homeownership Program', desc: 'First-time buyer & ownership assistance' },
+  { value: 'hud_resource', label: '🇺🇸 HUD Resource Team', desc: 'HUD-approved housing counseling agencies' },
+  { value: 'street_team', label: '🚶 Street Outreach Team', desc: 'Mobile outreach teams serving unsheltered' },
+  { value: 'crisis_team', label: '🚨 Crisis Response Team', desc: 'Mobile crisis intervention teams' },
+  { value: 'emergency_help', label: '🆘 Emergency Help Provider', desc: 'Emergency assistance & crisis services' },
+  { value: 'hospital', label: '🏥 Hospital', desc: 'Acute care hospitals & health systems' },
+  { value: 'healthcare', label: '⚕️ Healthcare Provider', desc: 'Clinics, FQHCs, community health centers' },
+  { value: 'therapist', label: '🛋️ Therapist', desc: 'Licensed therapists in private or group practice' },
+  { value: 'food_bank', label: '🍽️ Food Bank / Pantry', desc: 'Food distribution and meal programs' },
+  { value: 'educational_program', label: '📚 Educational Program', desc: 'GED, literacy, vocational training' },
+  { value: 'assisted_living', label: '👴 Assisted Living', desc: 'Assisted living & long-term care programs' },
+  { value: 'local_business', label: '🏪 Local Business', desc: 'Businesses offering jobs, donations, or space' },
+  { value: 'corporation', label: '🏢 Corporation', desc: 'Corporate social responsibility programs' },
+  { value: 'foundation', label: '💎 Foundation', desc: 'Private and community foundations' },
+  { value: 'grant_giver', label: '💰 Grant Provider', desc: 'Funders offering grants to organizations' },
+  { value: 'funding_resource', label: '📊 Funding Resource', desc: 'Financial assistance & benefits navigation' },
+  { value: 'donation_resource', label: '🎁 Donation Resource', desc: 'Goods, clothing, furniture donations' },
+  { value: 'state_agency', label: '🏛️ State Agency', desc: 'California state government programs' },
+  { value: 'federal_agency', label: '🇺🇸 Federal Agency / Program', desc: 'Federal departments and programs' },
+  { value: 'service_provider', label: '🛠️ Service Provider', desc: 'General human services organizations' },
+  { value: 'other', label: '➕ Other', desc: 'Other resource or service type' },
 ];
 
-const STEPS = ['Type', 'Organization', 'Services', 'Location', 'Programs', 'Review'];
+const STEPS = ['Organization Type', 'Basic Info', 'Location', 'Programs & Services', 'Capacity & Hours', 'Contact & Review'];
 
 export default function ProviderRegistrationPage() {
   const [step, setStep] = useState(0);
+  const [selectedType, setSelectedType] = useState('');
   const [form, setForm] = useState({
-    providerType: '',
     orgName: '', contactName: '', email: '', phone: '', website: '',
-    description: '', taxId: '', licenseNumber: '', certifications: '',
-    languages: [] as string[],
-    address: '', city: '', state: 'CA', zip: '',
-    serviceRadius: '10',
-    programs: [{ name: '', description: '', cost: 'free', capacity: '', tags: '' }],
-    // Shelter specific
+    ein: '', licenseNumber: '', established: '',
+    address: '', city: '', state: 'CA', zip: '', county: '',
+    bio: '', mission: '', languages: [] as string[],
+    programs: [{ name: '', description: '', eligibility: '', capacity: '', cost: 'free', tags: '' }],
     totalBeds: '', availableBeds: '', reservableBeds: '',
-    lgbtqFriendly: false, petFriendly: false, sobrietyRequired: false, veteranBeds: '', familyBeds: '',
-    intakeHours: '',
-    // Grant specific
-    grantAmount: '', grantDeadline: '', eligibility: '',
-    // Hours
-    monday: '', tuesday: '', wednesday: '', thursday: '', friday: '', saturday: '', sunday: '',
+    emergencyBeds: '', familyBeds: '', veteranBeds: '',
+    lgbtqFriendly: false, petFriendly: false, sobrietyRequired: false,
+    intakeHours: '', emergencyContact: '', fax: '',
+    acceptsReferrals: true, applicationRequired: false,
+    fundingSources: '', certifications: '',
     consent: false,
   });
 
-  const update = (k: string, v: unknown) => setForm(f => ({ ...f, [k]: v }));
-  const selected = PROVIDER_TYPES.find(p => p.value === form.providerType);
-  const isShelter = form.providerType === 'shelter_provider';
-  const isGrant = form.providerType === 'grant_giver' || form.providerType === 'foundation';
+  const update = (key: string, val: unknown) => setForm(f => ({ ...f, [key]: val }));
+  const isShelter = selectedType === 'shelter_provider';
+  const hasPrograms = !['apartment_manager', 'homeowner', 'local_business', 'corporation'].includes(selectedType);
 
   return (
     <main style={{ minHeight: '100vh', background: '#020617', color: '#e5e7eb', fontFamily: 'system-ui, sans-serif', padding: '2rem' }}>
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
-        <a href="/" style={{ color: '#64748b', textDecoration: 'none', fontSize: '0.9rem' }}>← Home</a>
+        <a href="/" style={{ color: '#64748b', textDecoration: 'none', fontSize: '0.9rem' }}>← zerofoundationusa.org</a>
         <h1 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '1rem 0 0.25rem', color: '#a855f7' }}>Provider Registration</h1>
-        <p style={{ color: '#64748b', marginBottom: '2rem' }}>Register your organization to connect with clients and the Zero Hub network.</p>
+        <p style={{ color: '#64748b', marginBottom: '2rem' }}>Join the Zero Hub network and connect with clients who need your services.</p>
 
-        {/* Progress */}
-        <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+        {/* Steps */}
+        <div style={{ display: 'flex', gap: '0.35rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
           {STEPS.map((s, i) => (
-            <div key={s} onClick={() => i < step && setStep(i)}
-              style={{ flex: 1, minWidth: 70, padding: '0.4rem', textAlign: 'center', borderRadius: 8,
-                background: i === step ? (selected?.color || '#a855f7') : i < step ? '#22c55e22' : '#0f172a',
-                color: i === step ? '#020617' : i < step ? '#22c55e' : '#475569',
-                fontWeight: i === step ? 700 : 400, fontSize: '0.78rem',
-                cursor: i < step ? 'pointer' : 'default' }}>
+            <div key={s} style={{ flex: 1, minWidth: 70, padding: '0.4rem', textAlign: 'center', borderRadius: 8, background: i === step ? '#a855f7' : i < step ? '#22c55e22' : '#0f172a', color: i === step ? '#fff' : i < step ? '#22c55e' : '#475569', fontWeight: i === step ? 700 : 400, fontSize: '0.72rem' }}>
               {i < step ? '✓ ' : ''}{s}
             </div>
           ))}
@@ -89,60 +84,69 @@ export default function ProviderRegistrationPage() {
         {/* Step 0: Type Selection */}
         {step === 0 && (
           <div>
-            <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>What type of organization are you?</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '0.6rem' }}>
-              {PROVIDER_TYPES.map((pt) => (
-                <div key={pt.value} onClick={() => update('providerType', pt.value)}
-                  style={{ padding: '0.75rem 1rem', borderRadius: 8, cursor: 'pointer',
-                    background: form.providerType === pt.value ? `${pt.color}22` : '#0f172a',
-                    border: `1px solid ${form.providerType === pt.value ? pt.color : '#1e293b'}`,
-                    color: form.providerType === pt.value ? pt.color : '#94a3b8',
-                    fontSize: '0.85rem', fontWeight: form.providerType === pt.value ? 700 : 400 }}>
-                  {pt.label}
-                </div>
+            <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>Select the type that best describes your organization:</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '0.6rem', maxHeight: 480, overflowY: 'auto', paddingRight: '0.5rem' }}>
+              {PROVIDER_TYPES.map((t) => (
+                <label key={t.value} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer', background: selectedType === t.value ? '#a855f720' : '#0f172a', border: `1px solid ${selectedType === t.value ? '#a855f7' : '#1e293b'}`, borderRadius: 8, padding: '0.75rem' }}>
+                  <input type="radio" name="providerType" value={t.value} checked={selectedType === t.value} onChange={() => setSelectedType(t.value)} style={{ marginTop: 3 }} />
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{t.label}</div>
+                    <div style={{ color: '#64748b', fontSize: '0.78rem' }}>{t.desc}</div>
+                  </div>
+                </label>
               ))}
             </div>
           </div>
         )}
 
-        {/* Step 1: Organization Info */}
+        {/* Step 1: Basic Info */}
         {step === 1 && (
           <div style={{ display: 'grid', gap: '1rem' }}>
-            {selected && <div style={{ padding: '0.6rem 1rem', background: `${selected.color}22`, border: `1px solid ${selected.color}`, borderRadius: 8, color: selected.color, fontSize: '0.9rem' }}>{selected.label}</div>}
             {[
-              { label: 'Organization Name *', key: 'orgName', type: 'text', placeholder: 'Full legal name' },
-              { label: 'Primary Contact Name *', key: 'contactName', type: 'text', placeholder: 'First Last' },
-              { label: 'Email *', key: 'email', type: 'email', placeholder: 'contact@org.org' },
-              { label: 'Phone *', key: 'phone', type: 'tel', placeholder: '(555) 555-5555' },
-              { label: 'Website', key: 'website', type: 'url', placeholder: 'https://yourorg.org' },
-              { label: 'Tax ID / EIN', key: 'taxId', type: 'text', placeholder: 'XX-XXXXXXX' },
-              { label: 'License / Certification Number', key: 'licenseNumber', type: 'text', placeholder: 'If applicable' },
+              { label: 'Organization / Program Name *', key: 'orgName', placeholder: 'Zero Hope Shelter' },
+              { label: 'Primary Contact Name *', key: 'contactName', placeholder: 'Jane Smith' },
+              { label: 'Email Address *', key: 'email', placeholder: 'admin@yourorg.org' },
+              { label: 'Phone Number *', key: 'phone', placeholder: '(555) 555-5555' },
+              { label: 'Website', key: 'website', placeholder: 'https://yourorg.org' },
+              { label: 'EIN / Tax ID', key: 'ein', placeholder: '12-3456789' },
+              { label: 'License / Certification Number', key: 'licenseNumber', placeholder: 'If applicable' },
+              { label: 'Year Established', key: 'established', placeholder: '2010' },
             ].map(f => (
               <div key={f.key}>
-                <label style={{ display: 'block', color: '#94a3b8', marginBottom: '0.4rem', fontSize: '0.9rem' }}>{f.label}</label>
-                <input type={f.type} value={(form as Record<string, unknown>)[f.key] as string}
-                  onChange={e => update(f.key, e.target.value)} placeholder={f.placeholder}
-                  style={{ width: '100%', padding: '0.75rem', background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8, color: '#e5e7eb', fontSize: '0.9rem', boxSizing: 'border-box' }} />
+                <label style={{ display: 'block', color: '#94a3b8', marginBottom: '0.3rem', fontSize: '0.88rem' }}>{f.label}</label>
+                <input value={(form as Record<string, unknown>)[f.key] as string} onChange={e => update(f.key, e.target.value)} placeholder={f.placeholder}
+                  style={{ width: '100%', padding: '0.7rem', background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8, color: '#e5e7eb', boxSizing: 'border-box' }} />
               </div>
             ))}
             <div>
-              <label style={{ display: 'block', color: '#94a3b8', marginBottom: '0.4rem', fontSize: '0.9rem' }}>Organization Description</label>
-              <textarea value={form.description} onChange={e => update('description', e.target.value)} rows={4}
-                placeholder="Describe your mission and services..."
-                style={{ width: '100%', padding: '0.75rem', background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8, color: '#e5e7eb', resize: 'vertical', boxSizing: 'border-box' }} />
+              <label style={{ display: 'block', color: '#94a3b8', marginBottom: '0.3rem', fontSize: '0.88rem' }}>Mission Statement</label>
+              <textarea value={form.mission} onChange={e => update('mission', e.target.value)} rows={3} placeholder="Briefly describe your mission..."
+                style={{ width: '100%', padding: '0.7rem', background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8, color: '#e5e7eb', resize: 'vertical', boxSizing: 'border-box' }} />
             </div>
+          </div>
+        )}
+
+        {/* Step 2: Location */}
+        {step === 2 && (
+          <div style={{ display: 'grid', gap: '1rem' }}>
+            {[
+              { label: 'Street Address *', key: 'address', placeholder: '123 Main St' },
+              { label: 'City *', key: 'city', placeholder: 'Los Angeles' },
+              { label: 'ZIP Code *', key: 'zip', placeholder: '90001' },
+              { label: 'County', key: 'county', placeholder: 'Los Angeles County' },
+            ].map(f => (
+              <div key={f.key}>
+                <label style={{ display: 'block', color: '#94a3b8', marginBottom: '0.3rem', fontSize: '0.88rem' }}>{f.label}</label>
+                <input value={(form as Record<string, unknown>)[f.key] as string} onChange={e => update(f.key, e.target.value)} placeholder={f.placeholder}
+                  style={{ width: '100%', padding: '0.7rem', background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8, color: '#e5e7eb', boxSizing: 'border-box' }} />
+              </div>
+            ))}
             <div>
-              <label style={{ display: 'block', color: '#94a3b8', marginBottom: '0.4rem', fontSize: '0.9rem' }}>Languages Served</label>
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                {['English', 'Spanish', 'Vietnamese', 'Chinese', 'Korean', 'Tagalog', 'Armenian', 'Farsi', 'Other'].map(lang => (
-                  <label key={lang} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer',
-                    padding: '0.3rem 0.7rem', borderRadius: 999, fontSize: '0.8rem',
-                    background: form.languages.includes(lang) ? '#a855f722' : '#0f172a',
-                    border: `1px solid ${form.languages.includes(lang) ? '#a855f7' : '#1e293b'}`,
-                    color: form.languages.includes(lang) ? '#a855f7' : '#64748b' }}>
-                    <input type="checkbox" checked={form.languages.includes(lang)}
-                      onChange={e => update('languages', e.target.checked ? [...form.languages, lang] : form.languages.filter(l => l !== lang))}
-                      style={{ display: 'none' }} />
+              <label style={{ display: 'block', color: '#94a3b8', marginBottom: '0.5rem', fontSize: '0.88rem' }}>Languages Supported</label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                {['English', 'Spanish', 'Vietnamese', 'Mandarin', 'Korean', 'Armenian', 'Tagalog', 'Arabic', 'Russian', 'ASL'].map(lang => (
+                  <label key={lang} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', background: form.languages.includes(lang) ? '#a855f720' : '#0f172a', border: `1px solid ${form.languages.includes(lang) ? '#a855f7' : '#1e293b'}`, borderRadius: 6, padding: '0.3rem 0.7rem', fontSize: '0.85rem' }}>
+                    <input type="checkbox" checked={form.languages.includes(lang)} onChange={e => update('languages', e.target.checked ? [...form.languages, lang] : form.languages.filter(l => l !== lang))} />
                     {lang}
                   </label>
                 ))}
@@ -151,133 +155,36 @@ export default function ProviderRegistrationPage() {
           </div>
         )}
 
-        {/* Step 2: Services */}
-        {step === 2 && (
-          <div style={{ display: 'grid', gap: '1.5rem' }}>
-            {/* Shelter-specific fields */}
-            {isShelter && (
-              <div style={{ background: '#0f172a', borderRadius: 10, padding: '1.25rem', border: '1px solid #22c55e33' }}>
-                <h3 style={{ color: '#22c55e', marginBottom: '1rem', fontWeight: 700 }}>🏠 Shelter Details</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
-                  {[['Total Beds', 'totalBeds'], ['Available Tonight', 'availableBeds'], ['Reservable Beds', 'reservableBeds'], ['Veteran Beds', 'veteranBeds'], ['Family Beds', 'familyBeds']].map(([label, key]) => (
-                    <div key={key}>
-                      <label style={{ display: 'block', color: '#64748b', fontSize: '0.8rem', marginBottom: '0.3rem' }}>{label}</label>
-                      <input type="number" value={(form as Record<string, unknown>)[key] as string} onChange={e => update(key, e.target.value)}
-                        style={{ width: '100%', padding: '0.6rem', background: '#020617', border: '1px solid #1e293b', borderRadius: 6, color: '#e5e7eb', boxSizing: 'border-box' }} />
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <label style={{ display: 'block', color: '#64748b', fontSize: '0.8rem', marginBottom: '0.4rem' }}>Intake Hours</label>
-                  <input value={form.intakeHours} onChange={e => update('intakeHours', e.target.value)} placeholder="e.g. 6pm - 10pm daily"
-                    style={{ width: '100%', padding: '0.6rem', background: '#020617', border: '1px solid #1e293b', borderRadius: 6, color: '#e5e7eb', boxSizing: 'border-box' }} />
-                </div>
-                <div style={{ display: 'flex', gap: '1.5rem', marginTop: '1rem', flexWrap: 'wrap' }}>
-                  {[['lgbtqFriendly', 'LGBTQ+ Friendly'], ['petFriendly', 'Pet Friendly'], ['sobrietyRequired', 'Sobriety Required']].map(([key, label]) => (
-                    <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: '#94a3b8', fontSize: '0.9rem' }}>
-                      <input type="checkbox" checked={(form as Record<string, unknown>)[key] as boolean} onChange={e => update(key, e.target.checked)} />
-                      {label}
-                    </label>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Grant-specific fields */}
-            {isGrant && (
-              <div style={{ background: '#0f172a', borderRadius: 10, padding: '1.25rem', border: '1px solid #eab30833' }}>
-                <h3 style={{ color: '#eab308', marginBottom: '1rem', fontWeight: 700 }}>💰 Funding Details</h3>
-                <div style={{ display: 'grid', gap: '0.75rem' }}>
-                  {[['Typical Grant Amount', 'grantAmount', '$10,000 - $50,000'], ['Application Deadline', 'grantDeadline', 'MM/DD/YYYY'], ['Eligibility Requirements', 'eligibility', 'Who can apply?']].map(([label, key, ph]) => (
-                    <div key={key}>
-                      <label style={{ display: 'block', color: '#64748b', fontSize: '0.8rem', marginBottom: '0.3rem' }}>{label}</label>
-                      <input value={(form as Record<string, unknown>)[key] as string} onChange={e => update(key, e.target.value)} placeholder={ph}
-                        style={{ width: '100%', padding: '0.6rem', background: '#020617', border: '1px solid #1e293b', borderRadius: 6, color: '#e5e7eb', boxSizing: 'border-box' }} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Hours of Operation */}
-            <div style={{ background: '#0f172a', borderRadius: 10, padding: '1.25rem', border: '1px solid #1e293b' }}>
-              <h3 style={{ color: '#94a3b8', marginBottom: '1rem', fontWeight: 700 }}>🕐 Hours of Operation</h3>
-              <div style={{ display: 'grid', gap: '0.5rem' }}>
-                {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => (
-                  <div key={day} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <span style={{ width: 90, color: '#64748b', fontSize: '0.85rem', textTransform: 'capitalize' }}>{day}</span>
-                    <input value={(form as Record<string, unknown>)[day] as string} onChange={e => update(day, e.target.value)}
-                      placeholder="e.g. 9am - 5pm or Closed"
-                      style={{ flex: 1, padding: '0.5rem 0.75rem', background: '#020617', border: '1px solid #1e293b', borderRadius: 6, color: '#e5e7eb', fontSize: '0.85rem' }} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Step 3: Location */}
+        {/* Step 3: Programs */}
         {step === 3 && (
-          <div style={{ display: 'grid', gap: '1rem' }}>
-            {[
-              { label: 'Street Address *', key: 'address', placeholder: '123 Main St' },
-              { label: 'City *', key: 'city', placeholder: 'Los Angeles' },
-              { label: 'ZIP Code *', key: 'zip', placeholder: '90001' },
-            ].map(f => (
-              <div key={f.key}>
-                <label style={{ display: 'block', color: '#94a3b8', marginBottom: '0.4rem', fontSize: '0.9rem' }}>{f.label}</label>
-                <input value={(form as Record<string, unknown>)[f.key] as string} onChange={e => update(f.key, e.target.value)}
-                  placeholder={f.placeholder}
-                  style={{ width: '100%', padding: '0.75rem', background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8, color: '#e5e7eb', boxSizing: 'border-box' }} />
-              </div>
-            ))}
-            <div>
-              <label style={{ display: 'block', color: '#94a3b8', marginBottom: '0.4rem', fontSize: '0.9rem' }}>Service Radius (miles)</label>
-              <input type="range" min="1" max="100" value={form.serviceRadius} onChange={e => update('serviceRadius', e.target.value)}
-                style={{ width: '100%', accentColor: selected?.color || '#a855f7' }} />
-              <div style={{ textAlign: 'center', color: selected?.color || '#a855f7', fontWeight: 700 }}>{form.serviceRadius} miles</div>
-            </div>
-            <div style={{ background: '#0f172a', borderRadius: 10, height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #1e293b', flexDirection: 'column', gap: '0.5rem' }}>
-              <div style={{ fontSize: '2rem' }}>📍</div>
-              <div style={{ color: '#475569', fontSize: '0.85rem' }}>Map preview loads with Google Maps API key</div>
-            </div>
-          </div>
-        )}
-
-        {/* Step 4: Programs */}
-        {step === 4 && (
-          <div style={{ display: 'grid', gap: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ color: '#94a3b8', fontWeight: 700, margin: 0 }}>Programs & Services Offered</h3>
-              <button onClick={() => update('programs', [...form.programs, { name: '', description: '', cost: 'free', capacity: '', tags: '' }])}
-                style={{ padding: '0.4rem 0.8rem', background: selected?.color || '#a855f7', color: '#020617', border: 'none', borderRadius: 6, fontWeight: 700, cursor: 'pointer', fontSize: '0.8rem' }}>
-                + Add Program
-              </button>
-            </div>
-            {form.programs.map((prog, i) => (
-              <div key={i} style={{ background: '#0f172a', borderRadius: 10, padding: '1.25rem', border: '1px solid #1e293b' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                  <span style={{ color: '#94a3b8', fontWeight: 600, fontSize: '0.9rem' }}>Program {i + 1}</span>
-                  {form.programs.length > 1 && (
-                    <button onClick={() => update('programs', form.programs.filter((_, j) => j !== i))}
-                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.8rem' }}>Remove</button>
-                  )}
+          <div style={{ display: 'grid', gap: '1.5rem' }}>
+            {hasPrograms && form.programs.map((prog, i) => (
+              <div key={i} style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: 10, padding: '1.25rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h3 style={{ margin: 0, color: '#a855f7', fontSize: '1rem' }}>Program {i + 1}</h3>
+                  {i > 0 && <button onClick={() => update('programs', form.programs.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.85rem' }}>Remove</button>}
                 </div>
-                {[['Program Name', 'name', 'e.g. Emergency Shelter Beds'], ['Description', 'description', 'What does this program offer?'], ['Capacity', 'capacity', 'e.g. 25'], ['Tags (comma-separated)', 'tags', 'e.g. housing, free, families']].map(([label, key, ph]) => (
-                  <div key={key} style={{ marginBottom: '0.6rem' }}>
-                    <label style={{ display: 'block', color: '#64748b', fontSize: '0.8rem', marginBottom: '0.3rem' }}>{label}</label>
-                    <input value={(prog as Record<string, string>)[key]} onChange={e => {
-                      const updated = [...form.programs];
-                      (updated[i] as Record<string, string>)[key] = e.target.value;
-                      update('programs', updated);
-                    }} placeholder={ph}
-                      style={{ width: '100%', padding: '0.6rem', background: '#020617', border: '1px solid #1e293b', borderRadius: 6, color: '#e5e7eb', fontSize: '0.85rem', boxSizing: 'border-box' }} />
+                {[
+                  { label: 'Program Name', key: 'name', placeholder: 'Emergency Shelter Program' },
+                  { label: 'Description', key: 'description', placeholder: 'Brief description of this program' },
+                  { label: 'Eligibility Requirements', key: 'eligibility', placeholder: 'Adults 18+, low income...' },
+                  { label: 'Capacity (# people)', key: 'capacity', placeholder: '50' },
+                  { label: 'Tags (comma separated)', key: 'tags', placeholder: 'shelter, men, meals, free' },
+                ].map(f => (
+                  <div key={f.key} style={{ marginBottom: '0.75rem' }}>
+                    <label style={{ display: 'block', color: '#94a3b8', marginBottom: '0.3rem', fontSize: '0.85rem' }}>{f.label}</label>
+                    <input value={prog[f.key as keyof typeof prog] as string} onChange={e => {
+                      const progs = [...form.programs];
+                      progs[i] = { ...progs[i], [f.key]: e.target.value };
+                      update('programs', progs);
+                    }} placeholder={f.placeholder}
+                      style={{ width: '100%', padding: '0.6rem', background: '#0a0f1e', border: '1px solid #1e293b', borderRadius: 6, color: '#e5e7eb', boxSizing: 'border-box' }} />
                   </div>
                 ))}
                 <div>
-                  <label style={{ display: 'block', color: '#64748b', fontSize: '0.8rem', marginBottom: '0.3rem' }}>Cost</label>
-                  <select value={prog.cost} onChange={e => { const updated = [...form.programs]; updated[i].cost = e.target.value; update('programs', updated); }}
-                    style={{ width: '100%', padding: '0.6rem', background: '#020617', border: '1px solid #1e293b', borderRadius: 6, color: '#e5e7eb' }}>
+                  <label style={{ display: 'block', color: '#94a3b8', marginBottom: '0.3rem', fontSize: '0.85rem' }}>Cost</label>
+                  <select value={prog.cost} onChange={e => { const progs = [...form.programs]; progs[i] = { ...progs[i], cost: e.target.value }; update('programs', progs); }}
+                    style={{ padding: '0.6rem', background: '#0a0f1e', border: '1px solid #1e293b', borderRadius: 6, color: '#e5e7eb' }}>
                     <option value="free">Free</option>
                     <option value="sliding_scale">Sliding Scale</option>
                     <option value="paid">Paid</option>
@@ -285,34 +192,92 @@ export default function ProviderRegistrationPage() {
                 </div>
               </div>
             ))}
+            {hasPrograms && (
+              <button onClick={() => update('programs', [...form.programs, { name: '', description: '', eligibility: '', capacity: '', cost: 'free', tags: '' }])}
+                style={{ padding: '0.75rem', background: '#1e293b', border: '1px dashed #334155', borderRadius: 8, color: '#94a3b8', cursor: 'pointer', width: '100%' }}>
+                + Add Another Program
+              </button>
+            )}
+            <div>
+              <label style={{ display: 'block', color: '#94a3b8', marginBottom: '0.3rem', fontSize: '0.88rem' }}>Funding Sources</label>
+              <input value={form.fundingSources} onChange={e => update('fundingSources', e.target.value)} placeholder="HUD, CDBG, Title IV, Private donations..."
+                style={{ width: '100%', padding: '0.7rem', background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8, color: '#e5e7eb', boxSizing: 'border-box' }} />
+            </div>
+          </div>
+        )}
+
+        {/* Step 4: Capacity & Hours */}
+        {step === 4 && (
+          <div style={{ display: 'grid', gap: '1rem' }}>
+            {isShelter && (
+              <>
+                <p style={{ color: '#94a3b8', margin: 0 }}>Shelter Bed Information</p>
+                {[
+                  { label: 'Total Beds', key: 'totalBeds' },
+                  { label: 'Available Beds Tonight', key: 'availableBeds' },
+                  { label: 'Reservable Beds', key: 'reservableBeds' },
+                  { label: 'Emergency Beds', key: 'emergencyBeds' },
+                  { label: 'Family Beds', key: 'familyBeds' },
+                  { label: 'Veteran Beds', key: 'veteranBeds' },
+                ].map(f => (
+                  <div key={f.key}>
+                    <label style={{ display: 'block', color: '#94a3b8', marginBottom: '0.3rem', fontSize: '0.88rem' }}>{f.label}</label>
+                    <input type="number" value={(form as Record<string, unknown>)[f.key] as string} onChange={e => update(f.key, e.target.value)} placeholder="0"
+                      style={{ width: '100%', padding: '0.7rem', background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8, color: '#e5e7eb', boxSizing: 'border-box' }} />
+                  </div>
+                ))}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
+                  {[['lgbtqFriendly', '🏳️‍🌈 LGBTQ+ Friendly'], ['petFriendly', '🐾 Pet Friendly'], ['sobrietyRequired', '🚫 Sobriety Required']].map(([key, label]) => (
+                    <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8, padding: '0.75rem', fontSize: '0.82rem' }}>
+                      <input type="checkbox" checked={(form as Record<string, unknown>)[key] as boolean} onChange={e => update(key, e.target.checked)} />
+                      {label}
+                    </label>
+                  ))}
+                </div>
+              </>
+            )}
+            <div>
+              <label style={{ display: 'block', color: '#94a3b8', marginBottom: '0.3rem', fontSize: '0.88rem' }}>Intake / Service Hours</label>
+              <input value={form.intakeHours} onChange={e => update('intakeHours', e.target.value)} placeholder="Mon-Fri 8am-5pm, Sat 9am-1pm"
+                style={{ width: '100%', padding: '0.7rem', background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8, color: '#e5e7eb', boxSizing: 'border-box' }} />
+            </div>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                <input type="checkbox" checked={form.acceptsReferrals} onChange={e => update('acceptsReferrals', e.target.checked)} />
+                <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Accepts Referrals</span>
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                <input type="checkbox" checked={form.applicationRequired} onChange={e => update('applicationRequired', e.target.checked)} />
+                <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Application Required</span>
+              </label>
+            </div>
           </div>
         )}
 
         {/* Step 5: Review */}
         {step === 5 && (
           <div style={{ background: '#0f172a', borderRadius: 12, padding: '1.5rem', border: '1px solid #1e293b' }}>
-            <h3 style={{ color: selected?.color || '#a855f7', marginBottom: '1rem' }}>Review Your Registration</h3>
+            <h3 style={{ color: '#a855f7', marginBottom: '1rem' }}>Review & Submit</h3>
             <div style={{ display: 'grid', gap: '0.5rem', marginBottom: '1.5rem' }}>
               {[
-                ['Type', selected?.label],
+                ['Type', PROVIDER_TYPES.find(t => t.value === selectedType)?.label || selectedType],
                 ['Organization', form.orgName],
                 ['Contact', form.contactName],
                 ['Email', form.email],
                 ['Phone', form.phone],
-                ['Location', `${form.city}, CA ${form.zip}`],
-                ['Programs', `${form.programs.filter(p => p.name).length} listed`],
-                ...(isShelter ? [['Total Beds', form.totalBeds], ['Available Tonight', form.availableBeds]] : []),
+                ['Location', `${form.address}, ${form.city}, ${form.state} ${form.zip}`],
+                ['Programs', `${form.programs.length} program(s) listed`],
               ].map(([k, v]) => (
-                <div key={k as string} style={{ display: 'flex', gap: '1rem', fontSize: '0.9rem' }}>
-                  <span style={{ color: '#64748b', minWidth: 140 }}>{k}:</span>
-                  <span style={{ color: '#e5e7eb' }}>{(v as string) || '—'}</span>
+                <div key={k} style={{ display: 'flex', gap: '1rem', fontSize: '0.9rem' }}>
+                  <span style={{ color: '#64748b', minWidth: 120 }}>{k}:</span>
+                  <span style={{ color: '#e5e7eb' }}>{v || '—'}</span>
                 </div>
               ))}
             </div>
             <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer' }}>
               <input type="checkbox" checked={form.consent} onChange={e => update('consent', e.target.checked)} style={{ marginTop: 3 }} />
               <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>
-                I certify that the information provided is accurate. I agree to The Zero Hub's provider terms of service and privacy policy. My organization's information will be visible to clients searching for services.
+                I certify that the information provided is accurate and that my organization is authorized to offer the listed services. I agree to The Zero Foundation's terms of service and data sharing policy for the Zero Homeless Initiative Hub.
               </span>
             </label>
           </div>
@@ -325,14 +290,14 @@ export default function ProviderRegistrationPage() {
             ← Back
           </button>
           {step < STEPS.length - 1 ? (
-            <button onClick={() => setStep(step + 1)} disabled={step === 0 && !form.providerType}
-              style={{ padding: '0.75rem 1.5rem', background: (step === 0 && !form.providerType) ? '#1e293b' : (selected?.color || '#a855f7'), border: 'none', borderRadius: 8, color: (step === 0 && !form.providerType) ? '#334155' : '#020617', fontWeight: 700, cursor: (step === 0 && !form.providerType) ? 'not-allowed' : 'pointer' }}>
+            <button onClick={() => setStep(step + 1)} disabled={step === 0 && !selectedType}
+              style={{ padding: '0.75rem 1.5rem', background: (step === 0 && !selectedType) ? '#1e293b' : '#a855f7', border: 'none', borderRadius: 8, color: (step === 0 && !selectedType) ? '#334155' : '#fff', fontWeight: 700, cursor: (step === 0 && !selectedType) ? 'not-allowed' : 'pointer' }}>
               Next →
             </button>
           ) : (
             <button disabled={!form.consent}
               style={{ padding: '0.75rem 1.5rem', background: form.consent ? '#22c55e' : '#1e293b', border: 'none', borderRadius: 8, color: form.consent ? '#020617' : '#334155', fontWeight: 700, cursor: form.consent ? 'pointer' : 'not-allowed' }}>
-              Submit Registration ✓
+              Submit for Review ✓
             </button>
           )}
         </div>

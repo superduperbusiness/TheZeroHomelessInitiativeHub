@@ -1,5 +1,6 @@
 // ============================================================
 // SMS RELAY — Twilio-backed chat SMS delivery
+// Zero Homeless Initiative Hub · zerofoundationusa.org
 // ============================================================
 
 export async function sendSMSRelay(to: string, message: string, fromName: string): Promise<boolean> {
@@ -12,7 +13,7 @@ export async function sendSMSRelay(to: string, message: string, fromName: string
     return false;
   }
 
-  const body = `[Zero Hub] Message from ${fromName}: ${message}`;
+  const body = `[The Zero Homeless Initiative] Message from ${fromName}: ${message}`;
   const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
 
   const res = await fetch(url, {

@@ -22,7 +22,7 @@ export default function DashboardPage() {
     <main style={{ minHeight: '100vh', background: '#020617', color: '#e5e7eb', fontFamily: 'system-ui, sans-serif' }}>
       {/* Top Nav */}
       <nav style={{ background: '#0f172a', borderBottom: '1px solid #1e293b', padding: '1rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link href="/" style={{ fontWeight: 800, color: '#38bdf8', textDecoration: 'none', fontSize: '1.1rem' }}>🏡 Zero Hub</Link>
+        <Link href="/" style={{ fontWeight: 800, color: '#38bdf8', textDecoration: 'none', fontSize: '1.05rem' }}>🏡 The Zero Homeless Initiative</Link>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <span style={{ background: '#22c55e22', color: '#22c55e', padding: '0.25rem 0.75rem', borderRadius: 999, fontSize: '0.8rem' }}>● Online</span>
           <Link href="/messages" style={{ color: '#94a3b8', textDecoration: 'none' }}>💬 Messages</Link>

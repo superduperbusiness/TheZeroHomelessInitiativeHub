@@ -1,0 +1,57 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 34
+    buildToolsVersion "34.0.0"
+
+    defaultConfig {
+        applicationId "org.zerofoundationusa.hub"
+        minSdkVersion 21
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0.0"
+        multiDexEnabled true
+    }
+
+    signingConfigs {
+        release {
+            // Fill in after generating keystore:
+            // storeFile file("zero-hub-release.keystore")
+            // storePassword "YOUR_STORE_PASSWORD"
+            // keyAlias "zero-hub"
+            // keyPassword "YOUR_KEY_PASSWORD"
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+            debuggable true
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    packagingOptions {
+        resources {
+            excludes += ['/META-INF/AL2.0', '/META-INF/LGPL2.1']
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'androidx.webkit:webkit:1.8.0'
+}
